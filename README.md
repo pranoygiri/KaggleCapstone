@@ -7,7 +7,6 @@ A comprehensive multi-agent automation system that manages recurring "life admin
 - **New User?** → Start with [USER_GUIDE.md](USER_GUIDE.md) - Complete walkthrough
 - **Want a Web UI?** → See [WEB_APP_GUIDE.md](WEB_APP_GUIDE.md) - Browser interface ✨
 - **Quick Setup?** → See [QUICKSTART.md](QUICKSTART.md) - 5 minute setup
-- **Need Reference?** → Check [QUICK_REFERENCE.md](QUICK_REFERENCE.md) - One-page cheat sheet
 - **Technical Details?** → Read [COURSE_CONCEPTS.md](COURSE_CONCEPTS.md) - Implementation deep-dive
 - **Visual Diagrams?** → View [ARCHITECTURE.md](ARCHITECTURE.md) - System architecture
 
