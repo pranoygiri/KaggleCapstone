@@ -1,5 +1,3 @@
-# Category 1: The Pitch (Problem, Solution, Value)
-
 ## 1. The Problem  
 Managing everyday “life admin” tasks has become increasingly complex and fragmented. Individuals must constantly juggle:
 
