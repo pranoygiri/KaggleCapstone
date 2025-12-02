@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Errand Agent System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #20beff 0%, #1a73e8 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: #20beff;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .session-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 13px;
+        }
+
+        .session-info strong {
+            color: #1a73e8;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h2::before {
+            content: '';
+            font-size: 24px;
+        }
+
+        .btn {
+            background: #20beff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background: #1a73e8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(32, 190, 255, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: #0ddd06;
+        }
+
+        .btn-secondary:hover {
+            background: #1565c0;
+        }
+
+        .btn-danger {
+            background: #f56565;
+        }
+
+        .btn-danger:hover {
+            background: #e53e3e;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #20beff;
+        }
+
+        .output {
+            background: #1a202c;
+            color: #68d391;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 15px;
+            line-height: 1.6;
+        }
+
+        .output pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-online {
+            background: #0ddd06;
+            box-shadow: 0 0 8px #07a563;
+        }
+
+        .status-offline {
+            background: #f56565;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #20beff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-card {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #20beff;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background: #c6f6d5;
+            color: #22543d;
+            border-left: 4px solid #48bb78;
+        }
+
+        .alert-error {
+            background: #fed7d7;
+            color: #742a2a;
+            border-left: 4px solid #f56565;
+        }
+
+        .alert-info {
+            background: #bee3f8;
+            color: #2c5282;
+            border-left: 4px solid #4299e1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1> Personal Errand Agent System</h1>
+            <p>Intelligent automation for bills, documents, subscriptions, and appointments</p>
+            <div class="session-info" id="sessionInfo">
+                <strong>Status:</strong> <span class="status-indicator status-offline"></span> Not connected
+            </div>
+        </div>
+
+        <div class="grid">
+            <!-- System Status Card -->
+            <div class="card">
+                <h2>System Status</h2>
+                <button class="btn" onclick="checkHealth()">Check Server Health</button>
+                <button class="btn btn-secondary" onclick="getSystemStatus()">Get System Status</button>
+                <div class="output" id="statusOutput" style="display: none;"></div>
+            </div>
+
+            <!-- Daily Scan Card -->
+            <div class="card">
+                <h2>Daily Scan</h2>
+                <p style="font-size: 13px; color: #666; margin-bottom: 15px;">
+                    Scans for bills, subscriptions, and appointments
+                </p>
+                <button class="btn" onclick="runDailyScan()" id="dailyScanBtn">
+                    Run Daily Scan
+                </button>
+                <div class="output" id="dailyScanOutput" style="display: none;"></div>
+            </div>
+
+            <!-- Bill Payment Card -->
+            <div class="card">
+                <h2>Pay Bill</h2>
+                <div class="form-group">
+                    <label>Bill ID</label>
+                    <input type="text" id="billId" placeholder="bill-123" value="bill-123">
+                </div>
+                <div class="form-group">
+                    <label>Amount ($)</label>
+                    <input type="number" id="billAmount" placeholder="125.50" value="125.50" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Payment Method</label>
+                    <select id="paymentMethod">
+                        <option value="bank_account">Bank Account</option>
+                        <option value="credit_card">Credit Card</option>
+                        <option value="debit_card">Debit Card</option>
+                    </select>
+                </div>
+                <button class="btn" onclick="payBill()">Process Payment</button>
+                <div class="output" id="billOutput" style="display: none;"></div>
+            </div>
+
+            <!-- Document Renewal Card -->
+            <div class="card">
+                <h2>Renew Document</h2>
+                <div class="form-group">
+                    <label>Document Type</label>
+                    <select id="docType">
+                        <option value="license">Driver's License</option>
+                        <option value="passport">Passport</option>
+                        <option value="insurance">Insurance</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Document ID</label>
+                    <input type="text" id="docId" placeholder="license-123" value="license-123">
+                </div>
+                <button class="btn" onclick="renewDocument()">Start Renewal</button>
+                <div class="output" id="docOutput" style="display: none;"></div>
+            </div>
+
+            <!-- Metrics Card -->
+            <div class="card" style="grid-column: span 2;">
+                <h2>Performance Metrics</h2>
+                <button class="btn" onclick="getMetrics()">Refresh Metrics</button>
+                <div class="stats-grid" id="metricsGrid" style="display: none;">
+                    <div class="stat-card">
+                        <div class="value" id="tasksCompleted">0</div>
+                        <div class="label">Tasks Completed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="value" id="agentCalls">0</div>
+                        <div class="label">Agent Calls</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="value" id="toolCalls">0</div>
+                        <div class="label">Tool Calls</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="value" id="successRate">0%</div>
+                        <div class="label">Success Rate</div>
+                    </div>
+                </div>
+                <div class="output" id="metricsOutput" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:4200';
+        let currentSessionId = null;
+
+        // Initialize
+        window.addEventListener('load', () => {
+            checkHealth();
+            createSession();
+        });
+
+        async function checkHealth() {
+            const output = document.getElementById('statusOutput');
+            const sessionInfo = document.getElementById('sessionInfo');
+
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                const data = await response.json();
+
+                output.style.display = 'block';
+                output.innerHTML = `<pre>✅ Server is healthy\nStatus: ${data.status}\nUptime: ${Math.floor(data.uptime)}s</pre>`;
+
+                sessionInfo.innerHTML = `<strong>Status:</strong> <span class="status-indicator status-online"></span> Connected to server`;
+            } catch (error) {
+                output.style.display = 'block';
+                output.innerHTML = `<pre style="color: #fc8181;">❌ Server offline\nError: ${error.message}\n\nMake sure to run: npm start</pre>`;
+
+                sessionInfo.innerHTML = `<strong>Status:</strong> <span class="status-indicator status-offline"></span> Server offline`;
+            }
+        }
+
+        async function createSession() {
+            try {
+                const response = await fetch(`${API_BASE}/api/sessions`, {
+                    method: 'POST'
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    currentSessionId = data.sessionId;
+                    const sessionInfo = document.getElementById('sessionInfo');
+                    sessionInfo.innerHTML = `<strong>Status:</strong> <span class="status-indicator status-online"></span> Connected | <strong>Session:</strong> ${currentSessionId.substring(0, 20)}...`;
+                }
+            } catch (error) {
+                console.error('Failed to create session:', error);
+            }
+        }
+
+        async function getSystemStatus() {
+            const output = document.getElementById('statusOutput');
+            output.style.display = 'block';
+            output.innerHTML = '<pre><span class="loading"></span>Loading system status...</pre>';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/status`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const status = data.status;
+                    output.innerHTML = `<pre>📊 System Status
+
+Active Agents: ${status.agents.length}
+Total Memories: ${status.memory.totalMemories}
+
+Memory Breakdown:
+${Object.entries(status.memory.byType).map(([type, count]) => `  ${type}: ${count}`).join('\n')}
+
+Agent List:
+${status.agents.map(a => `  • ${a.id} (${a.type})`).join('\n')}
+</pre>`;
+                }
+            } catch (error) {
+                output.innerHTML = `<pre style="color: #fc8181;">❌ Failed to get status\n${error.message}</pre>`;
+            }
+        }
+
+        async function runDailyScan() {
+            const output = document.getElementById('dailyScanOutput');
+            const btn = document.getElementById('dailyScanBtn');
+
+            output.style.display = 'block';
+            output.innerHTML = '<pre><span class="loading"></span>Running daily scan... This may take a few seconds...</pre>';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/scans/daily`, {
+                    method: 'POST'
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    const results = data.results;
+                    output.innerHTML = `<pre>✅ Daily Scan Complete
+
+${results[0]?.status === 'fulfilled' ? `📧 Bills Found: ${results[0].value?.billsFound || 0}
+   Due Soon: ${results[0].value?.billsDueSoon || 0}` : '❌ Bill scan failed'}
+
+${results[1]?.status === 'fulfilled' ? `📱 Subscriptions: ${results[1].value?.subscriptionsTracked || 0}
+   Upcoming Renewals: ${results[1].value?.upcomingRenewals || 0}` : '❌ Subscription scan failed'}
+
+${results[2]?.status === 'fulfilled' ? `📅 Appointments: ${results[2].value?.appointmentsTracked || 0}
+   Upcoming: ${results[2].value?.upcomingAppointments || 0}` : '❌ Appointment scan failed'}
+
+Session: ${data.sessionId}
+Duration: ${data.summary?.duration}ms
+</pre>`;
+                }
+            } catch (error) {
+                output.innerHTML = `<pre style="color: #fc8181;">❌ Daily scan failed\n${error.message}</pre>`;
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        async function payBill() {
+            if (!currentSessionId) {
+                alert('No session available. Please refresh the page.');
+                return;
+            }
+
+            const output = document.getElementById('billOutput');
+            const billId = document.getElementById('billId').value;
+            const amount = parseFloat(document.getElementById('billAmount').value);
+            const paymentMethod = document.getElementById('paymentMethod').value;
+
+            output.style.display = 'block';
+            output.innerHTML = '<pre><span class="loading"></span>Processing payment...</pre>';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/tasks`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sessionId: currentSessionId,
+                        task: {
+                            type: 'bill_payment',
+                            title: 'Pay Bill',
+                            metadata: { billId, amount, paymentMethod }
+                        }
+                    })
+                });
+                const data = await response.json();
+
+                if (data.success && data.result.success) {
+                    const payment = data.result.payment;
+                    output.innerHTML = `<pre>✅ Payment Successful
+
+Bill ID: ${billId}
+Amount: $${amount.toFixed(2)}
+Method: ${paymentMethod}
+Transaction: ${payment.transactionId}
+Status: ${payment.status}
+${payment.fee ? `Fee: $${payment.fee.toFixed(2)}` : ''}
+
+⚠️ DRY-RUN MODE: No actual payment made
+</pre>`;
+                } else {
+                    output.innerHTML = `<pre style="color: #fc8181;">❌ Payment Failed\n${data.error || data.result.error}</pre>`;
+                }
+            } catch (error) {
+                output.innerHTML = `<pre style="color: #fc8181;">❌ Payment failed\n${error.message}</pre>`;
+            }
+        }
+
+        async function renewDocument() {
+            if (!currentSessionId) {
+                alert('No session available. Please refresh the page.');
+                return;
+            }
+
+            const output = document.getElementById('docOutput');
+            const docType = document.getElementById('docType').value;
+            const docId = document.getElementById('docId').value;
+
+            output.style.display = 'block';
+            output.innerHTML = '<pre><span class="loading"></span>Processing document renewal...</pre>';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/tasks`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sessionId: currentSessionId,
+                        task: {
+                            type: 'document_renewal',
+                            title: `Renew ${docType}`,
+                            metadata: {
+                                documentId: docId,
+                                renewalUrl: `https://dmv.example.com/renew`
+                            }
+                        }
+                    })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    const result = data.result;
+                    output.innerHTML = `<pre>✅ Document Renewal Started
+
+Document: ${docType}
+Document ID: ${docId}
+Status: ${result.status || 'processing'}
+${result.filledFields ? `Fields Filled: ${result.filledFields.length}` : ''}
+${result.missingFields?.length > 0 ? `\n⚠️ Missing Fields: ${result.missingFields.join(', ')}` : ''}
+
+${result.status === 'form_ready' ? '✅ Form ready for submission' : ''}
+</pre>`;
+                } else {
+                    output.innerHTML = `<pre style="color: #fc8181;">❌ Renewal Failed\n${data.error}</pre>`;
+                }
+            } catch (error) {
+                output.innerHTML = `<pre style="color: #fc8181;">❌ Renewal failed\n${error.message}</pre>`;
+            }
+        }
+
+        async function getMetrics() {
+            const output = document.getElementById('metricsOutput');
+            const grid = document.getElementById('metricsGrid');
+
+            output.style.display = 'block';
+            output.innerHTML = '<pre><span class="loading"></span>Loading metrics...</pre>';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/metrics`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const metrics = data.metrics;
+
+                    // Update stat cards
+                    document.getElementById('tasksCompleted').textContent = metrics.counters['tasks.completed'] || 0;
+                    document.getElementById('agentCalls').textContent = metrics.counters['agents.calls'] || 0;
+                    document.getElementById('toolCalls').textContent = metrics.counters['tools.calls'] || 0;
+
+                    const success = metrics.counters['tools.success'] || 0;
+                    const total = metrics.counters['tools.calls'] || 1;
+                    document.getElementById('successRate').textContent = `${Math.round((success / total) * 100)}%`;
+
+                    grid.style.display = 'grid';
+                    output.innerHTML = `<pre>📈 Detailed Metrics
+
+Counters:
+${Object.entries(metrics.counters).map(([name, value]) => `  ${name}: ${value}`).join('\n')}
+
+Gauges:
+${Object.entries(metrics.gauges).map(([name, value]) => `  ${name}: ${value}`).join('\n') || '  (none)'}
+</pre>`;
+                }
+            } catch (error) {
+                output.innerHTML = `<pre style="color: #fc8181;">❌ Failed to get metrics\n${error.message}</pre>`;
+            }
+        }
+    </script>
+</body>
+</html>

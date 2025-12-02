@@ -102,19 +102,19 @@ Start the REST API server for integration with other applications:
 npm start
 ```
 
-Server will start on `http://localhost:3000`
+Server will start on `http://localhost:4200`
 
 **Test the API:**
 
 ```bash
 # Health check
-curl http://localhost:3000/health
+curl http://localhost:4200/health
 
 # Create a session
-curl -X POST http://localhost:3000/api/sessions
+curl -X POST http://localhost:4200/api/sessions
 
 # Submit a task
-curl -X POST http://localhost:3000/api/tasks \
+curl -X POST http://localhost:4200/api/tasks \
   -H "Content-Type: application/json" \
   -d '{
     "sessionId": "your-session-id",
@@ -130,10 +130,10 @@ curl -X POST http://localhost:3000/api/tasks \
   }'
 
 # Get system status
-curl http://localhost:3000/api/status
+curl http://localhost:4200/api/status
 
 # Get metrics
-curl http://localhost:3000/api/metrics
+curl http://localhost:4200/api/metrics
 ```
 
 ## Run Evaluation Tests
@@ -261,7 +261,7 @@ Key files to examine:
 If port 3000 is already in use:
 
 ```bash
-PORT=3001 npm start
+PORT=4201 npm start
 ```
 
 ### TypeScript Errors

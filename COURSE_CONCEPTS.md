@@ -630,7 +630,7 @@ if (missingFields.length > 0) {
 
 ```bash
 npm start
-# REST API on http://localhost:3000
+# REST API on http://localhost:4200
 ```
 
 **Key Endpoints:**

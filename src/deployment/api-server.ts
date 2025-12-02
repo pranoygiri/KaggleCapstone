@@ -15,6 +15,21 @@ import { tracer } from '../observability/tracer.js';
 const app = express();
 app.use(express.json());
 
+// Enable CORS for local development
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
+});
+
+// Serve static files from public directory
+app.use(express.static('public'));
+
 // Initialize system
 const memoryBank = new MemoryBank();
 const sessionService = new SessionService();
@@ -246,12 +261,13 @@ app.post('/api/memory/query', async (req: Request, res: Response) => {
 });
 
 // Start server
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4200;
 
 app.listen(PORT, () => {
   logger.info(`Agent API Server running on port ${PORT}`);
   console.log(`\n🚀 Personal Errand Agent System API`);
   console.log(`📡 Server: http://localhost:${PORT}`);
+  console.log(`🎨 Web App: http://localhost:${PORT}`);
   console.log(`❤️  Health: http://localhost:${PORT}/health`);
   console.log(`📊 Status: http://localhost:${PORT}/api/status`);
   console.log(`📈 Metrics: http://localhost:${PORT}/api/metrics\n`);

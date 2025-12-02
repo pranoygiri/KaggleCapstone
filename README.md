@@ -2,6 +2,15 @@
 
 A comprehensive multi-agent automation system that manages recurring "life admin" tasks such as paying bills, renewing documents, tracking subscriptions, scheduling appointments, managing deadlines, and handling paperwork.
 
+## 🚀 Quick Links
+
+- **New User?** → Start with [USER_GUIDE.md](USER_GUIDE.md) - Complete walkthrough
+- **Want a Web UI?** → See [WEB_APP_GUIDE.md](WEB_APP_GUIDE.md) - Browser interface ✨
+- **Quick Setup?** → See [QUICKSTART.md](QUICKSTART.md) - 5 minute setup
+- **Need Reference?** → Check [QUICK_REFERENCE.md](QUICK_REFERENCE.md) - One-page cheat sheet
+- **Technical Details?** → Read [COURSE_CONCEPTS.md](COURSE_CONCEPTS.md) - Implementation deep-dive
+- **Visual Diagrams?** → View [ARCHITECTURE.md](ARCHITECTURE.md) - System architecture
+
 ## Table of Contents
 
 - [System Overview](#system-overview)
@@ -180,7 +189,7 @@ npm run dev
 npm start
 ```
 
-Access the API at `http://localhost:3000`
+Access the API at `http://localhost:4200`
 
 ### Run Evaluation Tests
 
