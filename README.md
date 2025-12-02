@@ -48,8 +48,8 @@ Create an intelligent assistant that automatically:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    Orchestrator Agent                        │
-│            (Central Decision Maker & Router)                 │
+│                    Orchestrator Agent                       │
+│            (Central Decision Maker & Router)                │
 └────────────┬────────────────────────────────────────────────┘
              │
              │ Routes tasks to specialized agents
